@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEW CADET REQUISITION — 2030</title>
+<style>
+  :root{
+    --bg: #0a0a0c;
+    --panel: rgba(255,255,255,0.035);
+    --panel-border: rgba(255,255,255,0.09);
+    --lime: #c8ff4d;
+    --lime-dim: #8fb838;
+    --violet: #a78bfa;
+    --violet-dim: #6d5aa8;
+    --warn: #ff6b5c;
+    --text: #eef0e6;
+    --text-dim: #a3a4a9;
+    --text-faint: #6b6c72;
+    --mono: 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 1200px 600px at 15% -10%, rgba(200,255,77,0.05), transparent),
+      radial-gradient(ellipse 900px 500px at 100% 20%, rgba(167,139,250,0.06), transparent),
+      var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    padding: 32px 16px 80px;
+  }
+  .wrap{ max-width: 900px; margin: 0 auto; }
+
+  header{ margin-bottom: 28px; }
+  .eyebrow{
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em;
+    color: var(--lime); text-transform: uppercase; margin-bottom: 10px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow::before{ content:''; width:6px; height:6px; background:var(--lime); border-radius:50%; box-shadow:0 0 8px var(--lime); }
+  h1{ font-size: clamp(28px, 5vw, 42px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; margin-bottom: 8px; }
+  .sub{ color: var(--text-dim); font-size: 14.5px; max-width: 600px; line-height:1.55; margin-bottom: 18px;}
+  .countdown{ font-family: var(--mono); font-size: 12.5px; color: var(--text-faint); }
+  .countdown b{ color: var(--violet); font-weight: 700; }
+
+  .progress-card{
+    background: var(--panel); border: 1px solid var(--panel-border); backdrop-filter: blur(20px);
+    border-radius: 14px; padding: 18px 20px; margin: 22px 0 20px;
+  }
+  .progress-top{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; }
+  .progress-label{ font-family: var(--mono); font-size: 11px; color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;}
+  .progress-num{ font-family: var(--mono); font-size: 20px; font-weight:700; color: var(--lime); }
+  .progress-num span{ color: var(--text-faint); font-size: 13px; font-weight: 400; }
+  .bar-track{ height: 6px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow:hidden; }
+  .bar-fill{
+    height:100%; width:0%; background: linear-gradient(90deg, var(--lime-dim), var(--lime));
+    border-radius:4px; transition: width 0.5s cubic-bezier(.3,.9,.4,1); box-shadow: 0 0 12px rgba(200,255,77,0.5);
+  }
+
+  .callout{
+    border: 1px solid rgba(167,139,250,0.35);
+    background: linear-gradient(135deg, rgba(167,139,250,0.08), rgba(167,139,250,0.02));
+    border-radius: 14px; padding: 18px 20px; margin-bottom: 20px;
+  }
+  .callout .tag{ font-family: var(--mono); font-size: 10.5px; letter-spacing:0.14em; color: var(--violet); text-transform: uppercase; font-weight:700; margin-bottom:8px; display:block; }
+  .callout p{ font-size: 13.5px; color: var(--text-dim); line-height:1.6; margin-bottom:6px; }
+  .callout p:last-child{ margin-bottom:0; }
+  .callout strong{ color: var(--text); }
+
+  .fixnote{
+    border: 1px solid rgba(200,255,77,0.25);
+    background: rgba(200,255,77,0.04);
+    border-radius: 14px; padding: 16px 20px; margin-bottom: 28px;
+  }
+  .fixnote .tag{ font-family: var(--mono); font-size: 10.5px; letter-spacing:0.14em; color: var(--lime); text-transform: uppercase; font-weight:700; margin-bottom:10px; display:block; }
+  .fixnote table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .fixnote td{ padding: 5px 8px 5px 0; color: var(--text-dim); vertical-align:top; }
+  .fixnote td.item-col{ color: var(--text); font-weight:600; white-space:nowrap; padding-right:16px; }
+  .fixnote td.wrong{ color: var(--warn); text-decoration:line-through; text-decoration-color: rgba(255,107,92,0.4); white-space:nowrap; }
+  .fixnote td.right{ color: var(--lime); font-weight:700; white-space:nowrap; }
+
+  .section{ background: var(--panel); border: 1px solid var(--panel-border); backdrop-filter: blur(20px); border-radius: 16px; margin-bottom: 18px; overflow: hidden; }
+  .section-head{ display:flex; justify-content:space-between; align-items:center; padding: 16px 20px; cursor: pointer; user-select:none; border-bottom: 1px solid transparent; }
+  .section.open .section-head{ border-bottom-color: var(--panel-border); }
+  .section-title{ display:flex; align-items:center; gap: 10px; flex-wrap:wrap; }
+  .section-name{ font-size: 15.5px; font-weight: 700; letter-spacing:-0.01em; }
+  .badge{ font-family: var(--mono); font-size: 9.5px; letter-spacing:0.08em; padding: 3px 8px; border-radius: 20px; text-transform:uppercase; font-weight:700; }
+  .badge.mandatory{ background: rgba(200,255,77,0.12); color: var(--lime); border:1px solid rgba(200,255,77,0.25);}
+  .badge.recommended{ background: rgba(167,139,250,0.12); color: var(--violet); border:1px solid rgba(167,139,250,0.25);}
+  .section-right{ display:flex; align-items:center; gap:14px; }
+  .section-count{ font-family: var(--mono); font-size:12px; color: var(--text-faint); }
+  .chevron{ width:9px; height:9px; border-right:1.5px solid var(--text-faint); border-bottom:1.5px solid var(--text-faint); transform: rotate(45deg); margin-top:-3px; transition: transform 0.25s;}
+  .section:not(.open) .chevron{ transform: rotate(-45deg); margin-top:0;}
+
+  .section-body{ max-height:none; overflow:hidden; }
+  .section:not(.open) .section-body{ display:none; }
+  .items{ padding: 4px 12px 14px; }
+
+  .item{ display:flex; align-items:flex-start; gap: 12px; padding: 12px 8px; border-radius: 10px; transition: background 0.15s; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .item:last-child{ border-bottom:none; }
+  .item:hover{ background: rgba(255,255,255,0.025); }
+
+  .checkbox{ flex-shrink:0; width:19px; height:19px; margin-top:2px; border-radius: 5px; border: 1.5px solid rgba(255,255,255,0.22); display:flex; align-items:center; justify-content:center; cursor:pointer; transition: all 0.15s; background: rgba(255,255,255,0.02); }
+  .checkbox svg{ opacity:0; width:12px; height:12px; transition: opacity 0.15s; }
+  .checkbox.checked{ background: var(--lime); border-color: var(--lime); }
+  .checkbox.checked svg{ opacity:1; }
+
+  .item-body{ flex:1; min-width:0; }
+  .item-top{ display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+  .qty{ font-family: var(--mono); font-size: 11px; color: var(--violet); background: rgba(167,139,250,0.1); padding: 1px 7px; border-radius: 5px; flex-shrink:0; font-weight:700; }
+  .item-name{ font-size: 14px; font-weight: 600; line-height:1.4; }
+  .item.done .item-name{ color: var(--text-faint); text-decoration: line-through; text-decoration-color: rgba(255,255,255,0.2); }
+  .item.done .qty{ opacity:0.4; }
+  .addon-tag{ font-family: var(--mono); font-size:8.5px; letter-spacing:0.06em; color: var(--text-faint); border:1px solid rgba(255,255,255,0.14); padding:1px 6px; border-radius:20px; text-transform:uppercase; }
+
+  .spec{ font-size: 12.5px; color: var(--text-dim); margin-top: 5px; line-height:1.55; }
+  .spec b{ color: var(--text); font-weight:600; }
+  .tip{ font-size: 12px; color: var(--lime-dim); margin-top: 4px; line-height:1.5; }
+  .tip::before{ content:'TIP — '; font-family: var(--mono); font-size:9.5px; letter-spacing:0.05em; color: var(--lime-dim); opacity:0.8;}
+  .source{ font-family: var(--mono); font-size:10px; letter-spacing:0.03em; color: var(--text-faint); margin-top:5px; display:inline-block; }
+  .source::before{ content:'→ '; }
+  .crit-star{ color: var(--violet); font-weight:700; margin-left:2px; }
+
+  .prohibited{ border: 1px solid rgba(255,107,92,0.25); background: rgba(255,107,92,0.04); border-radius: 16px; padding: 20px 22px; margin-top: 28px; }
+  .prohibited h3{ font-family: var(--mono); font-size: 12px; letter-spacing:0.1em; color: var(--warn); text-transform:uppercase; margin-bottom: 14px; display:flex; align-items:center; gap:8px; }
+  .prohibited h3::before{ content:'✕'; font-size:13px; }
+  .prohibited-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width:600px){ .prohibited-grid{ grid-template-columns:1fr; } .fixnote table{ font-size:11.5px; } }
+  .prohibited-col p.label{ font-size:11px; color:var(--text-dim); font-weight:700; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;}
+  .prohibited ul{ list-style:none; }
+  .prohibited li{ font-size: 13px; color: var(--text-dim); padding: 4px 0; padding-left:14px; position:relative; line-height:1.4;}
+  .prohibited li::before{ content:'—'; position:absolute; left:0; color: var(--warn); opacity:0.5; }
+
+  footer{ margin-top: 32px; padding-top:20px; border-top: 1px solid var(--panel-border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+  .footnote{ font-size: 11.5px; color: var(--text-faint); line-height:1.6; max-width:520px;}
+  .reset-btn{ font-family: var(--mono); font-size: 11px; letter-spacing:0.05em; background: transparent; border: 1px solid rgba(255,255,255,0.15); color: var(--text-dim); padding: 8px 16px; border-radius: 8px; cursor:pointer; transition: all 0.15s; }
+  .reset-btn:hover{ border-color: var(--warn); color: var(--warn); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Rat Mass 2027+3 · Class of 2030</div>
+    <h1>New Cadet Requisition</h1>
+    <p class="sub">Every item, spec, and buying tip for Matriculation Day — official VMI mandatory list first, then the smart extras that aren't required but make Rat Line noticeably less miserable.</p>
+    <div class="countdown" id="countdown"></div>
+  </header>
+
+  <div class="progress-card">
+    <div class="progress-top">
+      <span class="progress-label">Requisition Status</span>
+      <span class="progress-num" id="progressNum">0<span>/0 squared away</span></span>
+    </div>
+    <div class="bar-track"><div class="bar-fill" id="barFill"></div></div>
+  </div>
+
+  <div class="callout">
+    <span class="tag">Two decisions that actually cost real money — lock these in first</span>
+    <p><strong>Laptop: Windows, non-negotiable.</strong> VMI IT does not support macOS or Chromebooks. Minimum 16GB RAM / 512GB SSD for most majors, 32GB/1TB for Engineering majors. Cyber Security isn't explicitly listed in either tier — email help@vmi.edu to confirm before you buy. If your dev workflow lives on a Mac, this is a real toolchain shift, budget the time to rebuild it, not just the money for the machine.</p>
+    <p><strong>Boots: one pair, from a locked list of four models.</strong> Belleville C390, FC390 (women's), Khyber II TR550, C320, FC320, Sabre C333 — nothing else. Arrive with unauthorized boots (including anything with USMC markings or zippers) and you'll be sent to the Military Store to buy the right pair anyway. Order early enough to break them in before you fly.</p>
+  </div>
+
+  <div class="fixnote">
+    <span class="tag">Corrections vs. generic packing lists floating around online</span>
+    <table>
+      <tr><td class="item-col">White t-shirts</td><td class="wrong">"8-10"</td><td class="right">Official: 15</td></tr>
+      <tr><td class="item-col">Underwear</td><td class="wrong">"8-10"</td><td class="right">Official: 14 pair</td></tr>
+      <tr><td class="item-col">Boot socks (over-calf)</td><td class="wrong">"8-10"</td><td class="right">Official: 10 pair</td></tr>
+      <tr><td class="item-col">Black dress socks</td><td class="wrong">"6-8"</td><td class="right">Official: 14 pair</td></tr>
+      <tr><td class="item-col">White athletic socks</td><td class="wrong">"4-6"</td><td class="right">Official: 14 pair</td></tr>
+      <tr><td class="item-col">Bath towels</td><td class="wrong">"2-3"</td><td class="right">Official: 5 (minimum)</td></tr>
+      <tr><td class="item-col">Compression shorts</td><td class="wrong">"8-10"</td><td class="right">Official: 7 pair</td></tr>
+    </table>
+  </div>
+
+  <div id="sections"></div>
+
+  <div class="prohibited">
+    <h3>Don't waste money on these — confiscated or banned</h3>
+    <div class="prohibited-grid">
+      <div class="prohibited-col">
+        <p class="label">Confiscated on sight</p>
+        <ul>
+          <li>Weapons or knives of any type</li>
+          <li>Microwaves, hot pots, heating elements, any appliance</li>
+          <li>Desk fan larger than 12"</li>
+          <li>Plants, pets</li>
+          <li>Candles, fireworks, incense — anything flammable</li>
+          <li>TVs or any entertainment media</li>
+          <li>Computer monitor over 32" diagonal</li>
+          <li>Alcohol, drugs, paraphernalia</li>
+        </ul>
+      </div>
+      <div class="prohibited-col">
+        <p class="label">Banned until Breakout (spring)</p>
+        <ul>
+          <li>Electric razors</li>
+          <li>DVDs, CDs, computer games</li>
+          <li>iPods, MP3 players, computer speakers</li>
+          <li>Any clothing/linens with visible logos or emblems</li>
+          <li>Transition-lens eyeglasses</li>
+          <li>Smart watches (social media/email/text capable)</li>
+          <li>Cell phone — stays with your dyke until Breakout</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p class="footnote">Mandatory-badge sections and exact quantities are sourced from VMI's official New Cadet Handbook 2026-27 and vmi.edu/whattobring. "Recommended" and "extra pick" items are practical add-ons, not VMI requirements — skip anything that doesn't fit your situation. Rules can shift; cross-check before matriculation, especially boots and computing specs. This tracker is personal — nothing here syncs to VMI.</p>
+    <button class="reset-btn" id="resetBtn">Reset all checkmarks</button>
+  </footer>
+
+</div>
+
+<script>
+const DATA = [
+  {
+    id:"paper", name:"Paperwork", badge:"mandatory", open:true,
+    items:[
+      {id:"p1", qty:"1", name:"Government ID", spec:"A passport works fine as your primary ID -- you won't have a US driver's license yet.", tip:"Photograph every page and email the scans to yourself as a backup before you fly."},
+      {id:"p2", qty:"1", name:"Insurance information", spec:"Physical or printed copy of your health insurance policy card and details."},
+      {id:"p3", qty:"--", name:"F-1 visa, I-20, DS-160 confirmation", spec:"You've already got these squared away.", tip:"Keep the originals in your carry-on, never checked luggage. Print two extra copies of the I-20 specifically -- it gets requested more than you'd expect.", crit:true},
+      {id:"p4", qty:"--", name:"ROTC branch paperwork", spec:"Only if you've already been assigned or expressed a branch preference -- otherwise this gets sorted during summer scheduling and at matriculation."}
+    ]
+  },
+  {
+    id:"boots", name:"Boots -- critical single purchase", badge:"mandatory", open:true,
+    items:[
+      {id:"b1", qty:"1 Pair", name:"Authorized combat boot -- pick ONE model", spec:"<b>Belleville C390</b> (unisex 2-16, widest size range) &middot; <b>FC390</b> women's &middot; <b>TR Khyber II TR550</b> (lightweight multi-terrain) &middot; <b>C320</b> Xero Ultra-Light (20oz/boot) &middot; <b>FC320</b> women's &middot; <b>Sabre C333</b> hybrid comfort. Men order unisex sizes 1-1.5 sizes smaller than normal shoe size; women order unisex sizes 3-3.5 smaller, or female-specific sizes 2 smaller.", tip:"Order 6-8 weeks out so you have real time to break them in -- wear them on actual walks, not just around the house. Get your foot measured in cm at a shoe shop in Addis and convert to the US chart rather than guessing from your usual EU/UK size.", crit:true, source:"Order online, or get fitted at VMI Military Store on arrival (540-464-7303)"}
+    ]
+  },
+  {
+    id:"cloth", name:"Clothing", badge:"mandatory", open:true,
+    items:[
+      {id:"c1", qty:"1", name:"Black hydration pack, 1.5L / 50oz", spec:"Camelbak, Blackhawk, or equivalent -- solid black including straps and tubing, no bright accents.", tip:"Have it before matriculation, not after -- you need it day one.", crit:true},
+      {id:"c2", qty:"1", name:"Black athletic watch", spec:"No smart watches -- anything that can access social media, email, or text is banned during Rat Line."},
+      {id:"c3", qty:"2 Pair", name:"Running shoes", spec:"Predominantly white or black.", tip:"Break these in for weeks before you arrive, not days. Fresh shoes plus daily PT is a fast way to get blisters during the first physical fitness test."},
+      {id:"c4", qty:"7 Pair", name:"Compression shorts", spec:"Black, reduces chafing under uniform."},
+      {id:"c5", qty:"14 Pair", name:"Underwear", spec:"White only -- boxers, boxer briefs, or briefs. Females skip this line.", tip:"Buy in multipacks of 6-7 to hit 14 without overpaying per unit -- Hanes and Fruit of the Loom both sell white multipacks that work fine."},
+      {id:"c6", qty:"1", name:"Mouth guard", spec:"For boxing class.", source:"Skip buying this in Addis -- grab it at the VMI Bookstore on Matriculation Day, one less thing in your one suitcase."},
+      {id:"c7", qty:"2", name:"Permanent black laundry markers", spec:"Sharpie or equivalent -- you'll mark your laundry number on every washable item during Matriculation Week."},
+      {id:"c8", qty:"15", name:"White crew neck t-shirts", spec:"Solid white, crew neck only -- no v-neck, no tank, no pockets, no logos (even white-on-white logos get flagged)."},
+      {id:"c9", qty:"7-10", name:"Sports bras (females)", spec:"White, high-impact recommended (minimum)."},
+      {id:"c10", qty:"14 Pair", name:"White athletic socks", spec:"Ankle or crew length, no visible logos."},
+      {id:"c11", qty:"10 Pair", name:"Black boot/hiking socks", spec:"Over-the-calf length, worn with combat boots.", tip:"Fox River and Under Armour Tactical are the go-to brands for this -- thick, durable, and they actually stay up during marches."},
+      {id:"c12", qty:"14 Pair", name:"Black dress socks", spec:"Plain, worn with low-quarter shoes -- should sit mid-calf so no skin shows when seated."},
+      {id:"c13", qty:"1 Pair", name:"Shower shoes", spec:"Rubber thong sandals -- non-negotiable for hygiene in communal barracks showers.", source:"Buy at VMI Bookstore on Matriculation Day"},
+      {id:"c14", qty:"1", name:"Swimsuit", spec:"Conservative one-piece or traditional swim trunks, navy or black."},
+      {id:"c15", qty:"1 Set", name:"Civilian clothes + shoes", spec:"One full outfit to travel in and store -- pick something for mild weather since you likely won't wear it again until later in the semester.", tip:"Wear your bulkiest items (jacket, boots) on the plane itself to save suitcase space."},
+      {id:"c16", qty:"3", name:"White wash cloths", spec:"Plain white, minimum three."},
+      {id:"c17", qty:"1", name:"Comforter", spec:"Dark solid color, Twin XL size."},
+      {id:"c18", qty:"5", name:"White bath towels", spec:"Plain white, minimum five -- laundry runs once a week so you need enough to bridge the gap."},
+      {id:"c19", qty:"1", name:"Pillow", spec:"White."},
+      {id:"c20", qty:"3", name:"Flat sheets", spec:"White, Twin XL, no elastic -- flat sheets only, not fitted."},
+      {id:"c21", qty:"3", name:"Pillowcases", spec:"White."},
+      {id:"c22", qty:"2-3", name:"Shirt stays / shirt garters", addon:true, spec:"Elastic straps that clip your uniform shirt hem to your sock tops, keeping it crisp and un-bunched all day. Official list calls this '1 set,' but most cadets end up wanting a spare.", source:"VMI Bookstore on Matriculation Day, or Amazon/military surplus beforehand"}
+    ]
+  },
+  {
+    id:"hygiene", name:"Personal Hygiene", badge:"mandatory", open:true,
+    items:[
+      {id:"h1", qty:"1", name:"Body/foot powder", tip:"Gold Bond medicated powder specifically -- it's the go-to for preventing chafing during heavy marching and running in August heat."},
+      {id:"h2", qty:"2", name:"Deodorant", spec:"Antiperspirant, not just fragrance -- you're sweating through PT twice a week minimum."},
+      {id:"h3", qty:"2 Pair", name:"Eyeglasses", spec:"If needed. No transition lenses allowed until after Breakout -- pack a plain pair as backup even if you normally wear transitions."},
+      {id:"h4", qty:"1 Set", name:"Hair clips, ties, bobby pins", spec:"Matching your natural hair color, if needed. Rubber bands are not permitted."},
+      {id:"h5", qty:"1 Set", name:"Pads, tampons, or other hygiene products", spec:"If needed -- 4th stoop bathrooms are stocked too during Matriculation Week, and EMTs carry them."},
+      {id:"h6", qty:"1 Kit", name:"Non-electric razor + shaving cream", spec:"Minimum 9 replacement blades.", tip:"Test a couple razor/cream combos on your own skin before you leave -- you'll be shaving daily without exception, and irritation compounds fast over weeks."},
+      {id:"h7", qty:"1 Bottle", name:"Shampoo/conditioner", tip:"A 2-in-1 saves real time during the rushed morning routine."},
+      {id:"h8", qty:"2 Bar", name:"Soap"},
+      {id:"h9", qty:"1", name:"Sunscreen", spec:"Tube or bottle -- you'll be outside for hours in Virginia August sun."},
+      {id:"h10", qty:"1", name:"Lip balm", tip:"Grab 2-3 if you can -- Lexington gets dry and windy, keep one in a pocket."},
+      {id:"h11", qty:"2", name:"Toothbrush"},
+      {id:"h12", qty:"1", name:"Toothpaste"},
+      {id:"h13", qty:"1", name:"Nail clippers", addon:true, spec:"Not on the official list but effectively mandatory in practice -- fingernails must be kept short and clean at all times for inspection."},
+      {id:"h14", qty:"1", name:"Face wash + basic moisturizer", addon:true, spec:"Not required by VMI, but worth having given how much you'll sweat outdoors daily -- something simple like Cetaphil works and won't irritate skin already stressed by daily shaving."},
+      {id:"h15", qty:"1", name:"Dental floss", addon:true}
+    ]
+  },
+  {
+    id:"tech", name:"School Supplies & Tech", badge:"mandatory", open:true,
+    items:[
+      {id:"t1", qty:"1", name:"Windows 11 laptop", spec:"NOT Mac/Chromebook -- unsupported by IT. 16GB RAM / 512GB SSD minimum for most majors, current-gen Intel Core, 4-year on-site warranty recommended.", tip:"Confirm with IT whether Cyber Security needs the Engineering-tier spec (32GB/1TB) before you buy -- it isn't explicitly listed either way.", crit:true, source:"Dell.com/lp/students has a 10% student discount code"},
+      {id:"t2", qty:"1", name:"Black fabric brief-case computer bag", spec:"Must be brief-case style, not a backpack."},
+      {id:"t3", qty:"1", name:"Protective laptop sleeve", addon:true, spec:"Not required, but your bag gets handled roughly during Matriculation Week -- worth the extra padding."},
+      {id:"t4", qty:"1", name:"Academic planner"},
+      {id:"t5", qty:"--", name:"Pens, pencils, notebooks, binders, calculator, highlighters, flash drive", spec:"Standard academic kit -- black ink pens specifically for paperwork.", tip:"Add one small pocket-sized notebook alongside the regular ones -- useful for jotting schedules and orders on the fly when you don't have a full notebook on you."},
+      {id:"t6", qty:"1", name:"USB-C multi-port hub", spec:"Recommended if your laptop drops Ethernet/USB-A/HDMI ports.", source:"Optional -- Dell Pro 7-in-1 or similar"},
+      {id:"t7", qty:"1", name:"CAT.5E or CAT.6 ethernet cable, 5-7 ft", spec:"Wireless extenders/routers are explicitly not allowed -- this cable is the actual workaround for a stable connection."}
+    ]
+  },
+  {
+    id:"misc", name:"Miscellaneous -- Highly Recommended", badge:"recommended", open:true,
+    items:[
+      {id:"m1", qty:"1", name:"Metal polish", spec:"Mothers or equivalent -- mag & aluminum."},
+      {id:"m2", qty:"1", name:"Brasso or equivalent", spec:"For brass uniform pieces."},
+      {id:"m3", qty:"1", name:"Black shoe polish + white cotton rag", spec:"Kiwi or equivalent."},
+      {id:"m4", qty:"1", name:"Boot brush"},
+      {id:"m5", qty:"1 Set", name:"Dusting supplies"},
+      {id:"m6", qty:"1", name:"Lint roller"},
+      {id:"m7", qty:"1", name:"Desk fan, 12in or smaller", spec:"Anything bigger gets confiscated on arrival."},
+      {id:"m8", qty:"1", name:"Lotion"},
+      {id:"m9", qty:"1", name:"Floss"},
+      {id:"m10", qty:"1", name:"Shower caddy", spec:"Rugged plastic or mesh, ideally with drain holes so it doesn't collect standing water between showers."},
+      {id:"m11", qty:"1", name:"Lockbox", source:"Buy from 3rd Class Finance Committee on Matriculation Day -- don't source this in Addis."},
+      {id:"m12", qty:"--", name:"Personal prescriptions or OTC meds", spec:"You're allowed to keep these in your room -- pack enough to bridge until you can restock locally, plus copies of prescriptions."},
+      {id:"m13", qty:"2-3", name:"Small combination padlocks", addon:true, spec:"Separate from your lockbox -- for securing a gym locker or shared-space item day to day."},
+      {id:"m14", qty:"1", name:"Small LED flashlight or headlamp with red-light mode", addon:true, spec:"After Taps (lights out), a red-light mode lets you find something in your room without waking your roommate or breaking light discipline."},
+      {id:"m15", qty:"1", name:"Slim wallet or card holder", addon:true, spec:"For your VMI ID card and a small amount of cash -- separate from the lockbox so you're not digging through it daily."}
+    ]
+  },
+  {
+    id:"intl", name:"International / Pre-Departure Logistics", badge:"recommended", open:true,
+    items:[
+      {id:"i1", qty:"1", name:"Lockable suitcase -- ONE piece only", spec:"Max roughly 32in L x 19in W x 16in D stacked -- everything else has to nest inside it. Trunk room space in the barracks is genuinely tight.", tip:"Weigh it before you leave Addis with everything packed -- you don't want an overweight-bag surprise at Bole airport on top of everything else."},
+      {id:"i2", qty:"--", name:"Name labels on every item you're bringing"},
+      {id:"i3", qty:"1-2", name:"US power adapter/converter", spec:"Ethiopia runs Type C/E/F plugs at 220V -- the US is Type A/B at 120V.", tip:"Your laptop charger is almost certainly dual-voltage (check the fine print on the brick), but don't assume the same for anything else electronic you bring."},
+      {id:"i4", qty:"1", name:"US SIM/eSIM sorted, or roaming confirmed for arrival day", spec:"Your phone gets held by your dyke until Breakout anyway, but it needs to work for the travel days leading up to that."},
+      {id:"i5", qty:"--", name:"US cash on hand, $100-200", spec:"For incidentals in the first days -- bookstore purchases, food court -- before you're fully settled into any local payment method."},
+      {id:"i6", qty:"1", name:"Cardboard box or plastic bin", spec:"Only relevant if a US-based family member is driving you in from the airport -- not needed if you're flying straight to check-in."},
+      {id:"i7", qty:"--", name:"Extra printed passport photos", addon:true, spec:"Not on any official VMI list, but useful buffer for any US paperwork or ID replacement that comes up in the first semester -- cheap insurance against a bureaucratic delay."}
+    ]
+  }
+];
+
+const root = document.getElementById('sections');
+let allIds = [];
+
+DATA.forEach(section => {
+  const el = document.createElement('div');
+  el.className = 'section' + (section.open ? ' open' : '');
+  el.innerHTML = `
+    <div class="section-head" data-toggle="${section.id}">
+      <div class="section-title">
+        <span class="section-name">${section.name}</span>
+        <span class="badge ${section.badge}">${section.badge}</span>
+      </div>
+      <div class="section-right">
+        <span class="section-count" id="count-${section.id}"></span>
+        <span class="chevron"></span>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="items">
+        ${section.items.map(it => {
+          allIds.push(it.id);
+          return `
+          <div class="item" data-item="${it.id}">
+            <div class="checkbox" data-check="${it.id}">
+              <svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="#0a0a0c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="item-body">
+              <div class="item-top">
+                ${it.qty !== "--" ? `<span class="qty">${it.qty}</span>` : ''}
+                <span class="item-name">${it.name}${it.crit ? '<span class="crit-star">&#10022;</span>' : ''}</span>
+                ${it.addon ? `<span class="addon-tag">extra pick</span>` : ''}
+              </div>
+              ${it.spec ? `<div class="spec">${it.spec}</div>` : ''}
+              ${it.tip ? `<div class="tip">${it.tip}</div>` : ''}
+              ${it.source ? `<div class="source">${it.source}</div>` : ''}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `;
+  root.appendChild(el);
+});
+
+let state = {};
+
+async function loadState(){
+  try{
+    const res = await window.storage.get('vmi-pack-state', false);
+    if(res && res.value) state = JSON.parse(res.value);
+  }catch(e){ state = {}; }
+  render();
+}
+
+async function saveState(){
+  try{ await window.storage.set('vmi-pack-state', JSON.stringify(state), false); }
+  catch(e){ console.error('save failed', e); }
+}
+
+function render(){
+  let checkedTotal = 0;
+  DATA.forEach(section => {
+    let checkedInSection = 0;
+    section.items.forEach(it => {
+      const isChecked = !!state[it.id];
+      if(isChecked){ checkedInSection++; checkedTotal++; }
+      const cb = document.querySelector(`[data-check="${it.id}"]`);
+      const row = document.querySelector(`[data-item="${it.id}"]`);
+      if(cb) cb.classList.toggle('checked', isChecked);
+      if(row) row.classList.toggle('done', isChecked);
+    });
+    const countEl = document.getElementById(`count-${section.id}`);
+    if(countEl) countEl.textContent = `${checkedInSection}/${section.items.length}`;
+  });
+  document.getElementById('progressNum').innerHTML = `${checkedTotal}<span>/${allIds.length} squared away</span>`;
+  const pct = allIds.length ? (checkedTotal/allIds.length*100) : 0;
+  document.getElementById('barFill').style.width = pct + '%';
+}
+
+root.addEventListener('click', (e) => {
+  const toggle = e.target.closest('[data-toggle]');
+  if(toggle){
+    toggle.closest('.section').classList.toggle('open');
+    return;
+  }
+  const check = e.target.closest('[data-check]');
+  if(check){
+    const id = check.dataset.check;
+    state[id] = !state[id];
+    render();
+    saveState();
+  }
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if(confirm('Clear every checkmark? This cannot be undone.')){
+    state = {};
+    render();
+    saveState();
+  }
+});
+
+function updateCountdown(){
+  const target = new Date('2026-08-15T00:00:00');
+  const now = new Date();
+  const diff = target - now;
+  const days = Math.max(0, Math.ceil(diff / (1000*60*60*24)));
+  document.getElementById('countdown').innerHTML = `<b>${days}</b> days until Matriculation Day -- Saturday, August 15, 2026`;
+}
+updateCountdown();
+
+loadState();
+</script>
+</body>
+</html>
